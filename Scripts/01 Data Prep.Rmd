@@ -1,0 +1,15 @@
+---
+title: "01 Date Prep"
+author: "JungHwan Yang"
+date: "March 26, 2015"
+output: html_document
+---
+
+This is Korean Presidential Debate 1 project.
+
+```{r Read raw data}
+path <- "Data//koprez1"
+d <- read.delim (path, header = F)
+```
+
+
