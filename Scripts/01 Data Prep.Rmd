@@ -1,15 +1,35 @@
 ---
-title: "01 Date Prep"
+title: "01 Data Prep"
 author: "JungHwan Yang"
 date: "March 26, 2015"
 output: html_document
 ---
 
-This is Korean Presidential Debate 1 project.
+## This is Korean Presidential Debate 1 project.
+
+To read the data without formatting errors, I had to read the text file in SPSS and saved in .sav; then read it from R.
 
 ```{r Read raw data}
-path <- "Data//koprez1"
-d <- read.delim (path, header = F)
+path <- "Data//koprez1.sav"
+d <- read.spss(path, use.value.labels = F, to.data.frame = T)
+
+d[d == "\\N"] <- NA
+
+# For quick transformation of df, convert the df into data table
+library(data.table)
+d.table <- data.table(d)
+# Sort by time
+setorder(d.table, V2)
+d.table <- subset(d.table, V2 != "NA")
+# Subset two hours (2:20 hours)
+d2 <- subset(d.table,
+               as.POSIXct(V2) > '2012-12-04 10:30:00' &
+               as.POSIXct(V2) < '2012-12-04 13:30:00')
+rm(d);rm(d.table)
 ```
 
 
+
+```{r}
+
+```
