@@ -28,8 +28,33 @@ d2 <- subset(d.table,
 rm(d);rm(d.table)
 ```
 
+http://rstudio-pubs-static.s3.amazonaws.com/1617_b9a9f37daa2d48d9be83ad0b91d7fdf4.html
+
+http://www.ddokbaro.com/3695
 
 
 ```{r}
+library(KoNLP)
+library(tm)
 
+removeRT <- function(x) {
+    gsub("RT @[[:graph:]]*", "", x)
+}
+
+removeTwit <- function(x) {
+    gsub("@[[:graph:]]*", "", x)
+}
+
+removeURL <- function(x) {
+    gsub("http://[[:graph:]]*", "", x)
+}
+
+d2$text <- sapply(d2$V3, removeRT)
+d2$text <- sapply(d2$text, removeTwit)
+d2$text <- sapply(d2$text, removeURL)
+useSejongDic()
+
+d2$text <- sapply(d2$text, function(x) {
+  paste(extractNoun(x), collapse = " ")
+  })
 ```
