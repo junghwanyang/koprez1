@@ -1,0 +1,1 @@
+This is a project to analyze Twitter users during the first Korean presidential debate in 2012.
