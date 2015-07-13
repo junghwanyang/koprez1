@@ -1,0 +1,169 @@
+---
+title: "06 US vs Korea"
+author: "JungHwan Yang"
+date: "May 13, 2015"
+output: html_document
+---
+
+### Read US data: The 1st US Debate
+
+```{r}
+library (foreign)
+d.us <- read.spss(file = 'Data/MergedUSDebate1.sav',
+                  to.data.frame = T)
+```
+
+Recode missing 
+Count frequency of only available segments both for Korea and US
+Rerun the regression analysis cuz some codings were wrong.
+When running regression, code NA and No to 0
+
+```{r}
+# Recode misisng
+## Korean data
+d.merged.g <- # Create a new data frame named "d.merged.g" for graphical depiction
+  read.spss(file = 'Data/Korean Debate Merged.sav',
+                      to.data.frame = T)
+d.merged.g <- d.merged.g[, c(7:30, 32:40, 42:50, 52:54)]
+d.merged.g[, c(7:30, 32:40, 42:50, 52:54)][d.merged.g[, c(7:30, 32:40, 42:50, 52:54)] == 0] <- NA
+## US data: debate 1
+names(d.us[, c(8:10, 12:15, 17, 23, 25, 31, 33, 38:39, 70, 72, 78, 80, 85:86)])
+d.us[, c(8:10, 12:15, 17, 23, 25, 31, 33, 38:39, 70, 72, 78, 80, 85:86)][d.us[, c(8:10, 12:15, 17, 23, 25, 31, 33, 38:39, 70, 72, 78, 80, 85:86)] == 0] <- NA
+
+# Visual elements
+## Angry/Theat (AT) Facial
+t.ATface <- data.frame(rbind(
+  table(d.merged.g$PGH_ATface), table(d.merged.g$MJI_ATface),
+  table(d.merged.g$LJH_ATface),
+  table(d.us$O_AT_face), table(d.us$R_AT_face)))
+rownames(t.ATface) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.ATface) <- c("Yes", "No")
+barplot (prop.table(t(t.ATface), margin = 2), width = 1) # Proportion
+barplot (t(t.ATface), width = 1) # Count
+title("Angry/Threatning Facial Expression")
+
+## Happy/Reassuring (HR) Facial
+t.HRface <- data.frame(rbind(
+  table(d.merged.g$PGH_HRface), table(d.merged.g$MJI_HRface),
+  table(d.merged.g$LJH_HRface),
+  table(d.us$O_HR_face), table(d.us$R_HR_face)))
+rownames(t.HRface) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.HRface) <- c("Yes", "No")
+barplot (prop.table(t(t.HRface), margin = 2), width = 1)
+barplot (t(t.HRface), width = 1)
+title("Happy/Reassuring Facial Expression")
+
+## Neutral Facial
+# d.us$O_Neut_face_recode <- recode(d.us$O_Neut_face, "0 = NA")
+# d.us$R_Neut_face_recode <- recode(d.us$R_Neut_face, "0 = NA")
+# 
+# t.Neutface <- data.frame(rbind(
+#   table(d.merged.g$PGH_Neutface), table(d.merged.g$MJI_Neutface),
+#   table(d.merged.g$LJH_Neutface),
+#   table(d.us$O_Neut_face), table(d.us$R_Neut_face)))
+# rownames(t.Neutface) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+# colnames(t.Neutface) <- c("Yes", "No")
+# barplot (prop.table(t(t.Neutface), margin = 2), width = 1)
+# barplot (t(t.Neutface), width = 1)
+# title("Neutral Facial Expression")
+
+## Affinity Gesture
+t.AffGest <- data.frame(rbind(
+  table(d.merged.g$PGH_AffGest), table(d.merged.g$MJI_AffGest),
+  table(d.merged.g$LJH_AffGest),
+  table(d.us$O_AffGest), table(d.us$R_AffGest)))
+rownames(t.AffGest) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.AffGest) <- c("Yes", "No")
+barplot (prop.table(t(t.AffGest), margin = 2), width = 1)
+barplot (t(t.AffGest), width = 1)
+title("Affinity Gesture")
+
+## Defiant Gesture
+t.DefGest <- data.frame(rbind(
+  table(d.merged.g$PGH_DefGest), table(d.merged.g$MJI_DefGest),
+  table(d.merged.g$LJH_DefGest),
+  table(d.us$O_DefGest), table(d.us$R_DefGest)))
+rownames(t.DefGest) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.DefGest) <- c("Yes", "No")
+barplot (prop.table(t(t.DefGest), margin = 2), width = 1)
+barplot (t(t.DefGest), width = 1)
+title("Defiant Gesture")
+
+# Tonal Elements
+## AT Tone
+t.ATtone <- data.frame(rbind(
+  table(d.merged.g$PGH_ATtone), table(d.merged.g$MJI_ATtone),
+  table(d.merged.g$LJH_ATtone),
+  table(d.us$O_AT_tone), table(d.us$R_AT_tone)))
+rownames(t.ATtone) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.ATtone) <- c("Yes", "No")
+barplot (prop.table(t(t.ATtone), margin = 2), width = 1)
+barplot (t(t.ATtone), width = 1)
+title("Angry/Threatning Voice Tone")
+
+## HR Tone
+t.HRtone <- data.frame(rbind(
+  table(d.merged.g$PGH_HRtone), table(d.merged.g$MJI_HRtone),
+  table(d.merged.g$LJH_HRtone),
+  table(d.us$O_HR_tone), table(d.us$R_HR_tone)))
+rownames(t.HRtone) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.HRtone) <- c("Yes", "No")
+barplot (prop.table(t(t.HRtone), margin = 2), width = 1)
+barplot (t(t.HRtone), width = 1)
+title("Happy/Reassuring Voice Tone")
+
+# Verbal Elements
+## Attacking
+t.Attack <- data.frame(rbind(
+  table(d.merged.g$PGH_resp), table(d.merged.g$MJI_att),
+  table(d.merged.g$LJH_att),
+  table(d.us$Obama_resp), table(d.us$Romney_att)))
+rownames(t.Attack) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.Attack) <- c("Yes", "No")
+barplot (prop.table(t(t.Attack), margin = 2), width = 1)
+barplot (t(t.Attack), width = 1)
+title("Attacking")
+
+## Responding
+t.Resp <- data.frame(rbind(
+  table(d.merged.g$PGH_co), table(d.merged.g$MJI_resp),
+  table(d.merged.g$LJH_resp),
+  table(d.us$Obama_resp), table(d.us$Romney_resp)))
+rownames(t.Resp) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.Resp) <- c("Yes", "No")
+barplot (prop.table(t(t.Resp), margin = 2), width = 1)
+title("Responding")
+
+## Contrasting
+t.Con <- data.frame(rbind(
+  table(d.merged.g$PGH_con), table(d.merged.g$MJI_con),
+  table(d.merged.g$LJH_con),
+  table(d.us$Obama_con), table(d.us$Romney_con)))
+rownames(t.Con) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.Con) <- c("Yes", "No")
+barplot (prop.table(t(t.Con), margin = 2), width = 1)
+title("Contrasting")
+
+## Narrative
+t.Nar <- data.frame(rbind(
+  table(d.merged.g$PGH_nar), table(d.merged.g$MJI_nar),
+  table(d.merged.g$LJH_nar),
+  table(d.us$Obama_nar), table(d.us$Romney_nar)))
+rownames(t.Nar) <- c("Park", "Moon", "Lee", "Obama", "Romney")
+colnames(t.Nar) <- c("Yes", "No")
+barplot (prop.table(t(t.Nar), margin = 2), width = 1)
+title("Narrative")
+
+
+# par(mar = c(5.1, 4.1, 4.1, 7.1), xpd = TRUE)
+# barplot(prop, col = heat.colors(length(rownames(prop))), margin = 2), width = 2)
+# legend("topright", inset = c(-0.25, 0), fill = heat.colors(length(colnames(prop.tmp))), 
+#        legend = colnames(tmp))
+```
+
+
+
+```{r}
+par(mar = c(5, 5, 5, 5))
+par(mfrow = c(2, 1))
+```

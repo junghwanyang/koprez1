@@ -1,0 +1,192 @@
+---
+title: "03 Plotting Time Series"
+author: "JungHwan Yang"
+date: "May 7, 2015"
+output: html_document
+---
+
+
+```{r}
+
+plot(ko.whole.grouped$time.30, ko.whole.grouped$count.seg)
+
+ggplot(ko.whole.grouped, aes(x=time.30, y=count.seg)) + geom_line()
+
+library(ggplot2)
+
+# Total volume
+plotTot <-
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) + 
+  geom_line(aes(y = count.seg, col = "Total count")) +
+  xlab("Time") + ylab("Count") + 
+  theme_bw() 
+ 
+
+plotTot.1 <-
+  ggplot(ko.whole.grouped, aes(x = time.30, y = count.seg)) + 
+  geom_point() + geom_smooth(method = "loess") +
+  xlab("Time") + ylab("Count") + 
+  theme_bw()
+
+
+# Conservative and Liberal
+plotCL.count <- 
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) + 
+  geom_line(aes(y = classC, col = "Conservative")) + 
+  geom_line(aes(y = classL, col = "Liberal")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw() 
+
+plotCL.count.1 <- 
+  ggplot(ko.whole.grouped, aes(x = time.30, y = , color = Type)) + 
+  geom_point(aes(y = classC, col = "Conservative")) + 
+  geom_point(aes(y = classL, col = "Liberal")) +
+  geom_smooth(aes(y = classC, col = "Conservative"), method = "loess") + 
+  geom_smooth(aes(y = classL, col = "Liberal"), method = "loess") +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+  
+plotCL.prop <- 
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) + 
+  geom_line(aes(y = classC/count.seg, col = "Conservative")) + 
+  geom_line(aes(y = classL/count.seg, col = "Liberal")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+
+# Memes
+plotM <-
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+  geom_line(aes(y = classM, col = "Memes         ")) + 
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+
+# Plot popular keywords
+# Find popular terms
+sort(colSums(ko.whole.grouped[,-1]))
+
+# Candidates' names
+plotNames <-
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+  geom_line(aes(y = 이정희.stem, col = "Lee             ")) + 
+  geom_line(aes(y = 박근혜.stem, col = "Park            ")) +
+  geom_line(aes(y = 문재인.stem, col = "Moon            ")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+plotMemes <-
+  ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+  geom_line(aes(y = 사퇴.stem, col = "Withdraw")) +
+  geom_line(aes(y = 다까.stem, col = "Dakaki Masao")) + 
+  geom_line(aes(y = 떨어뜨.stem, col = "Defeat You")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+  
+  
+
+# # Not very many tweets with these
+# ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+#   geom_line(aes(y = 리정희.stem, col = "Lee (mockery)")) + 
+#   geom_line(aes(y = 박그네.stem, col = "Park (mockery)")) +
+#   geom_line(aes(y = 문죄인.stem, col = "Moon (mockery)")) +
+#   xlab("Time") + ylab("Count") +
+#   theme_bw()
+
+
+# Plotting main keywords/memes
+
+ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+  geom_line(aes(y = 종북.stem+공산.stem+빨갱.stem, col = "Communist")) +
+  geom_line(aes(y = 다까.stem, col = "Dakaki Masao")) + 
+  geom_line(aes(y = 읽을게, col = "Eval")) +
+  geom_line(aes(y = 떨어뜨.stem, col = "Defeat You")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+
+ggplot(ko.whole.grouped, aes(time.30, y = value, color = Type)) +
+  geom_line(aes(y = count.seg, col = "Tot")) +
+  geom_line(aes(y = 떨어뜨.stem, col = "Defeat You")) +
+  xlab("Time") + ylab("Count") +
+  theme_bw()
+
+```
+
+
+Put multiple plots in a page
+
+```{r}
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+
+```{r}
+multiplot(plotNames, plotCL.count, cols=1)
+```
+
+
+ggplot(ko.whole.grouped, aes(time.30, y = value, color = type)) + 
+    geom_point(aes(y = 박근혜.stem, col = "park.p")) + 
+    geom_point(aes(y = 박그네.stem, col = "park.n")) +
+    geom_point(aes(y = 이정희.stem, col = "lee.p")) +
+    geom_point(aes(y = 리정희.stem, col = "lee.n")) +
+    geom_point(aes(y = 문재인.stem, col = "moon.p")) +
+    geom_point(aes(y = 문죄인.stem, col = "moon.n"))
+  
+  
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

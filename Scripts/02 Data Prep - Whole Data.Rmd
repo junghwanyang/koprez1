@@ -1,0 +1,676 @@
+---
+title: "02 Data Prep - Whole Data"
+author: "JungHwan Yang"
+date: "May 2, 2015"
+output: html_document
+---
+
+```{r}
+# Merge cells with some errors
+d2$V3 <- paste(d2$V3, d2$V30, sep = ""); d2$V30 <- NULL
+d2$V9 <- paste(d2$V9, d2$V90, sep = ""); d2$V90 <- NULL
+
+
+# Apply clearText() to every line
+d2$text <- sapply(d2$V3, cleanText)
+koCorpus.whole <- Corpus(VectorSource(d2$text))
+
+ko.whole.dtm <- data.frame(inspect(DocumentTermMatrix(koCorpus.whole)))
+
+# Merge unique ID with DTM
+ko.whole.dtm <- 
+  cbind(d2$V1, ko.whole.dtm)
+names(ko.whole.dtm)[1] <- "UniqueID"
+
+# Change the variable names of the hashtag DTM by replacing # with h.
+names (ko.whole.dtm) <-
+  names(ko.whole.dtm) %>%
+  gsub("X.", "h.", .)
+
+# Remove weird X
+names (ko.whole.dtm) <-
+  names(ko.whole.dtm) %>%
+  gsub("X", "", .)
+
+# 국민
+국민.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^국민*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^국민*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$국민.stem <- 국민.stem
+rm(국민.stem)
+
+# 궁금
+궁금.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^궁금*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^궁금*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$궁금.stem <- 궁금.stem
+rm(궁금.stem)
+
+# 공산
+공산.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^공산*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^공산*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$공산.stem <- 공산.stem
+rm(공산.stem)
+
+# 나왔
+나왔.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^나왔*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^나왔*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$나왔.stem <- 나왔.stem
+rm(나왔.stem)
+
+# 날치기
+날치기.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^날치기*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^날치기*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$날치기.stem <- 날치기.stem
+rm(날치기.stem)
+
+# 남북관계
+남북관계.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^남북관계*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^남북관계*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$남북관계.stem <- 남북관계.stem
+rm(남북관계.stem)
+
+# 남쪽정부, 남한정부
+남쪽정부.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^남쪽정부*", names(ko.whole.dtm), value=T)], na.rm = T)
+남한정부.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^남한정부*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^남쪽정부*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^남한정부*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$남쪽정부.stem <- 남쪽정부.stem + 남한정부.stem
+rm(남쪽정부.stem); rm(남한정부.stem)
+
+# 내거티, 내가티
+내거티.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^내거티*", names(ko.whole.dtm), value=T)], na.rm = T)
+내가티.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^내가티*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^내거티*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^내가티*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$내거티.stem <- 내거티.stem + 내가티.stem
+rm(내거티.stem); rm(내가티.stem)
+
+# 내용
+내용.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^내용*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^내용*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$내용.stem <- 내용.stem
+rm(내용.stem)
+
+# 노동자
+노동자.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^노동자*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^노동자*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$노동자.stem <- 노동자.stem
+rm(노동자.stem)
+
+# 노무현
+노무현.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^노무현*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^노무현*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$노무현.stem <- 노무현.stem
+rm(노무현.stem)
+
+# 다까, 다카 (다카키 마사오)
+다까.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^다까*", names(ko.whole.dtm), value=T)], na.rm = T)
+다카.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^다카*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^다까*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^다카*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$다까.stem <- 다까.stem + 다카.stem
+rm(다까.stem); rm(다카.stem)
+
+# 다운계약
+다운계약.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^다운계약*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^다운계약*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$다운계약.stem <- 다운계약.stem
+rm(다운계약.stem)
+
+# 당황
+당황.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^당황*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^당황*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$당황.stem <- 당황.stem
+rm(당황.stem)
+
+# 대단
+대단.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^대단*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^대단*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$대단.stem <- 대단.stem
+rm(대단.stem)
+
+# 대박
+대박.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^대박*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^대박*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$대박.stem <- 대박.stem
+rm(대박.stem)
+
+# 대통령
+대통령.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^대통령*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^대통령*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$대통령.stem <- 대통령.stem
+rm(대통령.stem)
+
+# 대한민국
+대한민국.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^대한민국*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^대한민국*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$대한민국.stem <- 대한민국.stem
+rm(대한민국.stem)
+
+# 독재
+독재.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^독재*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^독재*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$독재.stem <- 독재.stem
+rm(독재.stem)
+
+# 돌직구
+돌직구.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^돌직구*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^돌직구*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$돌직구.stem <- 돌직구.stem
+rm(돌직구.stem)
+
+# 드러
+드러.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^드러*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^드러*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$드러.stem <- 드러.stem
+rm(드러.stem)
+
+# 등록금
+등록금.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^등록금*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^등록금*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$등록금.stem <- 등록금.stem
+rm(등록금.stem)
+
+# 떨어뜨, 떨어트
+떨어뜨.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^떨어뜨*", names(ko.whole.dtm), value=T)], na.rm = T)
+떨어트.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^떨어트*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^떨어뜨*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^떨어트*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$떨어뜨.stem <- 떨어뜨.stem + 떨어트.stem
+rm(떨어뜨.stem); rm(떨어트.stem)
+
+# 리정희
+리정희.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^리정희*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^리정희*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$리정희.stem <- 리정희.stem
+rm(리정희.stem)
+
+# 마리앙
+마리앙.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^마리앙*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^마리앙*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$마리앙.stem <- 마리앙.stem
+rm(마리앙.stem)
+
+# 문재인, 문후보
+문재인.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^문재인*", names(ko.whole.dtm), value=T)], na.rm = T)
+문후보.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^문후보*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^문재인*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^문후보*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$문재인.stem <- 문재인.stem + 문후보.stem
+rm(문재인.stem); rm(문후보.stem)
+
+# 문죄인
+문죄인.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^문죄인*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^문죄인*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$문죄인.stem <- 문죄인.stem
+rm(문죄인.stem)
+
+# 모르
+모르.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^모르*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^모르*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$모르.stem <- 모르.stem
+rm(모르.stem)
+
+# 민주당
+민주당.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^민주당*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^민주당*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$민주당.stem <- 민주당.stem
+rm(민주당.stem)
+
+# 박그네
+박그네.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^박그네*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^박그네*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$박그네.stem <- 박그네.stem
+rm(박그네.stem)
+
+# 박근혜, 박후보
+박근혜.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^박근혜*", names(ko.whole.dtm), value=T)], na.rm = T)
+박후보.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^박후보*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^박근혜*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^박후보*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$박근혜.stem <- 박근혜.stem + 박후보.stem
+rm(박근혜.stem); rm(박후보.stem)
+
+# 박정희
+박정희.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^박정희*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^박정희*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$박정희.stem <- 박정희.stem
+rm(박정희.stem)
+
+# 북한
+북한.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^북한*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^북한*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$북한.stem <- 북한.stem
+rm(북한.stem)
+
+# 불쌍
+불쌍.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^불쌍*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^불쌍*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$불쌍.stem <- 불쌍.stem
+rm(불쌍.stem)
+
+# 비난
+비난.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^비난*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^비난*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$비난.stem <- 비난.stem
+rm(비난.stem)
+
+# 비방
+비방.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^비방*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^비방*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$비방.stem <- 비방.stem
+rm(비방.stem)
+
+# 빨갱
+빨갱.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^빨갱*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^빨갱*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$빨갱.stem <- 빨갱.stem
+rm(빨갱.stem)
+
+# 사람들
+사람들.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^사람들*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^사람들*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$사람들.stem <- 사람들.stem
+rm(사람들.stem)
+
+# 사퇴
+사퇴.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^사퇴*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^사퇴*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$사퇴.stem <- 사퇴.stem
+rm(사퇴.stem)
+
+# 사회자
+사회자.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^사회자*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^사회자*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$사회자.stem <- 사회자.stem
+rm(사회자.stem)
+
+# 사회환원
+사회환원.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^사회환원*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^사회환원*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$사회환원.stem <- 사회환원.stem
+rm(사회환원.stem)
+
+# 삼성장
+삼성장.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^삼성장*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^삼성장*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$삼성장.stem <- 삼성장.stem
+rm(삼성장.stem)
+
+# 선관위
+선관위.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^선관위*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^선관위*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$선관위.stem <- 선관위.stem
+rm(선관위.stem)
+
+# 소름
+소름.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^소름*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^소름*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$소름.stem <- 소름.stem
+rm(소름.stem)
+
+# 스나이퍼
+스나이퍼.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^스나이퍼*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^스나이퍼*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$스나이퍼.stem <- 스나이퍼.stem
+rm(스나이퍼.stem)
+
+# 손석희
+손석희.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^손석희*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^손석희*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$손석희.stem <- 손석희.stem
+rm(손석희.stem)
+
+# 새누리
+새누리.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^새누리*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^새누리*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$새누리.stem <- 새누리.stem
+rm(새누리.stem)
+
+# 안보
+안보.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^안보*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^안보*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$안보.stem <- 안보.stem
+rm(안보.stem)
+
+# 안철수
+안철수.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^안철수*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^안철수*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$안철수.stem <- 안철수.stem
+rm(안철수.stem)
+
+# 여성대통령
+여성대.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^여성대*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^여성대*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$여성대.stem <- 여성대.stem
+rm(여성대.stem)
+
+# 영해
+영해.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^영해*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^영해*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$영해.stem <- 영해.stem
+rm(영해.stem)
+
+# 예능
+예능.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^예능*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^예능*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$예능.stem <- 예능.stem
+rm(예능.stem)
+
+# 유신
+유신.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^유신*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^유신*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$유신.stem <- 유신.stem
+rm(유신.stem)
+
+# 이정희, 이후보
+이정희.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^이정희*", names(ko.whole.dtm), value=T)], na.rm = T)
+이후보.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^이후보*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^이정희*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^이후보*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$이정희.stem <- 이정희.stem + 이후보.stem
+rm(이정희.stem); rm(이후보.stem)
+
+# 전두환
+전두환.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^전두환*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^전두환*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$전두환.stem <- 전두환.stem
+rm(전두환.stem)
+
+# 정권교체
+정권교체.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^정권교체*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^정권교체*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$정권교체.stem <- 정권교체.stem
+rm(정권교체.stem)
+
+# 종북
+종북.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^종북*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^종북*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$종북.stem <- 종북.stem
+rm(종북.stem)
+
+# 참여정
+참여정.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^참여정*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^참여정*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$참여정.stem <- 참여정.stem
+rm(참여정.stem)
+
+# 청와대
+청와대.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^청와대*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^청와대*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$청와대.stem <- 청와대.stem
+rm(청와대.stem)
+
+# ㅋㅋ
+ㅋㅋ.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^ㅋㅋ*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^ㅋㅋ*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$ㅋㅋ.stem <- ㅋㅋ.stem
+rm(ㅋㅋ.stem)
+
+# 토론
+토론.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^토론*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^토론*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$토론.stem <- 토론.stem
+rm(토론.stem)
+
+# ko.whole.dtm$토론.stem <- rowSums(ko.whole.dtm[,names(ko.whole.dtm) %in% grep("^토론[ 가까과도만ㅇ에으은을의이인일입장ㅋ하한할회 ]", names(ko.whole.dtm), value=T)], na.rm = T)
+# ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^토론[가까과도만ㅇ에으은을의이인일입장ㅋ하한할회 ]", names(ko.whole.dtm), value=TRUE)))
+
+# 통진당
+통진당.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^통진당*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^통진당*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$통진당.stem <- 통진당.stem
+rm(통진당.stem)
+
+# 트위터
+트위터.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^트위터*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^트위터*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$트위터.stem <- 트위터.stem
+rm(트위터.stem)
+
+# 한미f
+한미f.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^한미f*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^한미f*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$한미f.stem <- 한미f.stem
+rm(한미f.stem)
+
+# 후보
+후보.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^후보*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^후보*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$후보.stem <- 후보.stem
+rm(후보.stem)
+
+# h.park20
+h.park20.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^h.park20*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^h.park20*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$h.park20.stem <- h.park20.stem
+rm(h.park20.stem)
+
+# h.대선토
+h.대선토.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^h.대선토*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^h.대선토*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$h.대선토.stem <- h.대선토.stem
+rm(h.대선토.stem)
+
+# h.박근
+h.박근.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^h.박근*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^h.박근*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$h.박근.stem <- h.박근.stem
+rm(h.박근.stem)
+
+# h.위키트
+h.위키트.stem <- rowSums(ko.whole.dtm[, names(ko.whole.dtm) %in% grep("^h.위키트*", names(ko.whole.dtm), value=T)], na.rm = T)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !(names(ko.whole.dtm) %in% grep("^h.위키트*", names(ko.whole.dtm), value=T)))
+ko.whole.dtm$h.위키트.stem <- h.위키트.stem
+rm(h.위키트.stem)
+
+# Remove variables that is longer than 15 characters
+library(stringr)
+ko.whole.dtm <- subset(ko.whole.dtm, select = !str_length(names(ko.whole.dtm)) > 10)
+
+```
+
+Total number of variables in DTM reduced from 66395 to 50478
+
+
+### Add time variable to the data frame
+
+```{r}
+ko.whole.dtm <- 
+  cbind(d2$V2, ko.whole.dtm)
+names(ko.whole.dtm)[1] <- "time"
+```
+
+
+# Subset data frame more
+
+- It seems like the debate starts at 2012-12-04 11:00:25 (Twitter time, which is 20:00:25 in Korean time.)
+- The first tweet that mentioned the start of the debate was 11:00:33
+- Here, I subset the data from 10 minutes from the start point and 10 minutes after the end point of the debate
+- The debate lasted for 1:53:09
+- The end time would be 12:53:34 (12:54:00 for we used 30 sec interval)
+- The total time range of the data would be:
+    - 10:50:30 ~ 13:04:00
+
+```{r}
+# Subset two hours (2:20 hours)
+ko.whole.dtm <- 
+  subset(ko.whole.dtm,
+         as.POSIXct(time) > '2012-12-04 10:50:29' &
+         as.POSIXct(time) < '2012-12-04 13:04:01')
+# This results in 21815 observations
+
+d2.1 <- 
+  subset(d2,
+         as.POSIXct(V2) > '2012-12-04 10:50:29' &
+         as.POSIXct(V2) < '2012-12-04 13:04:01')
+```
+
+Group time by 30 seconds
+
+```{r}
+time.30 <- cut(as.POSIXct(ko.whole.dtm[,"time"]),
+               breaks = '30 sec', ordered_result = T)
+ko.whole.dtm <- 
+  cbind(time.30, ko.whole.dtm)
+names(ko.whole.dtm)[1] <- "time.30"
+rm(time.30)
+```
+
+
+```{r}
+# Shorted the list of variables of ko.whole.dtm by only using the variables that are used in the handcoded training data.
+ko.whole.dtm.short <-
+  subset(ko.whole.dtm, select = (names(ko.whole.dtm) %in% names(ko.dtm)))
+
+ko.dtm.short <-
+  subset(ko.dtm, select = (names(ko.dtm) %in% names(ko.whole.dtm)))
+ko.dtm.short <- 
+  cbind(d.coded.2$Coding, ko.dtm.short)
+names(ko.dtm.short)[1] <- "User_Ideology"
+
+
+ko.dtm.names <- names(ko.dtm.short)
+
+write.table(ko.dtm.short, "ko.dtm.noname.csv", sep = ",", col.names = F)
+write.table(ko.whole.dtm.short, "ko.whole.dtm.noname.csv", sep = ",", col.names = F)
+write.table(ko.dtm.names, "variable.names.csv")
+```
+
+http://stackoverflow.com/questions/13649019/with-r-split-time-series-data-into-time-intervals-say-an-hour-and-then-plot-t
+http://r.789695.n4.nabble.com/How-to-sum-and-group-data-by-DATE-in-data-frame-td903708.html
+http://stackoverflow.com/questions/14236349/how-to-sum-5-minute-intervals-in-r
+http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+
+### Combining machine coded column with the dtm
+
+```{r}
+# Combining trained coding with the DTM
+ko.class <- read.csv("ML Results/class_predictions.csv", header = F)
+## First column of this file contains the result of Ridge clasifier, Random Forest (2nd col), SVM (3rd)
+colnames(ko.class) <- c("Ridge", "RandomF", "SVM")
+ko.class$classC <- 0
+ko.class$classL <- 0
+ko.class$classU <- 0
+ko.class$classM <- 0
+
+# Change nominal variable to binary variable
+ko.class$classC <- ifelse(ko.class$Ridge == "C", 1, 0)
+ko.class$classL <- ifelse(ko.class$Ridge == "L", 1, 0)
+ko.class$classU <- ifelse(ko.class$Ridge == "U", 1, 0)
+ko.class$classM <- ifelse(ko.class$Ridge == "M", 1, 0)
+
+# Remove the first row of ko.whole.dtm.short
+ko.whole.dtm.short <- ko.whole.dtm.short[-1,]
+d2.1 <- d2.1[-1,]
+
+# Combine classification
+ko.whole.dtm.short <- 
+  cbind(ko.class[4:7], ko.whole.dtm.short)
+
+# Combining time.30 (time variable group by 30 secs) with the trained set
+ko.whole.dtm.short <- 
+  cbind(d2.1$V2, ko.whole.dtm.short)
+ko.whole.dtm.short <- ko.whole.dtm.short[-c(1:7),] # Delete first 7 tweets to adjust start time
+names(ko.whole.dtm.short)[1] <- "time.30"
+ko.whole.dtm.short$time.30 <- 
+  cut(as.POSIXct(ko.whole.dtm.short[,"time.30"]),
+      breaks = '30 sec', ordered_result = T)
+```
+
+
+```{r}
+ko.whole.grouped <- group_by(ko.whole.dtm.short, time.30)
+ko.whole.grouped <- summarise_each(ko.whole.grouped, funs(sum))
+
+ko.whole.grouped$count.seg <- 
+  ko.whole.grouped$classC + ko.whole.grouped$classL +
+  ko.whole.grouped$classU + ko.whole.grouped$classM
+
+ko.whole.grouped$communist.key <-
+  ko.whole.grouped$공산.stem + ko.whole.grouped$빨갱.stem +
+  ko.whole.grouped$종북.stem
+
+ko.whole.grouped <- ko.whole.grouped[c(1, 4965, 2:4964)]
+ko.whole.grouped <- data.frame(ko.whole.grouped)
+
+ko.whole.grouped$time.30 <-
+  as.POSIXct(ko.whole.grouped$time.30) + 32400 #adjust time
+
+# ko.whole.grouped$time.30 <-
+#   strftime(as.POSIXct(ko.whole.grouped$time.30), "%H:%M:%S")
+```
+
+### Make a time lagged datasets
+
+#### 15 secs lagged data
+
+```{r}
+##### 15 secs lagged dataset
+
+# Shorted the list of variables of ko.whole.dtm by only using the variables that are used in the handcoded training data.
+ko.whole.dtm.short.15 <- # Make a 15 sec lagged dataset
+  subset(ko.whole.dtm, select = (names(ko.whole.dtm) %in% names(ko.dtm)))
+
+# Remove the first row of ko.whole.dtm.short
+ko.whole.dtm.short.15 <- ko.whole.dtm.short.15[-1,]
+
+# Combine classification
+ko.whole.dtm.short.15 <- 
+  cbind(ko.class[4:7], ko.whole.dtm.short.15)
+
+# Combining time.15 (time variable group by 15 secs) with the trained set
+ko.whole.dtm.short.15 <- 
+  cbind(d2.1$V2, ko.whole.dtm.short.15)
+ko.whole.dtm.short.15 <- ko.whole.dtm.short.15[-c(1:7),] # Delete first 7 tweets to adjust start time
+
+names(ko.whole.dtm.short.15)[1] <- "time.15.lag15"
+
+# Group by 15 secs
+ko.whole.dtm.short.15$time.15.lag15 <- 
+  cut(as.POSIXct(ko.whole.dtm.short.15[,"time.15.lag15"]),
+      breaks = '15 sec', ordered_result = T)
+
+# Then remove the first six cases that belong to the 15 sec segment and grouped by 30 secs
+ko.whole.dtm.short.15 <- ko.whole.dtm.short.15[-c(1:6),]
+
+ko.whole.dtm.short.15$time.15.lag15 <-
+  cut(as.POSIXct(ko.whole.dtm.short.15[, "time.15.lag15"]),
+      breaks = '30 sec', ordered_result = T)
+names(ko.whole.dtm.short.15)[1] <- "time.30.lag15"
+
+# Summarize by 30 secs
+ko.whole.grouped.15 <- group_by(ko.whole.dtm.short.15, time.30.lag15)
+ko.whole.grouped.15 <- summarise_each(ko.whole.grouped.15, funs(sum))
+
+ko.whole.grouped.15$communist.key <-
+  ko.whole.grouped.15$공산.stem + ko.whole.grouped.15$빨갱.stem +
+  ko.whole.grouped.15$종북.stem
+
+ko.whole.grouped.15$count.seg <- 
+  ko.whole.grouped.15$classC + ko.whole.grouped.15$classL +
+  ko.whole.grouped.15$classU + ko.whole.grouped.15$classM
+
+ko.whole.grouped.15 <- ko.whole.grouped.15[c(1, 4966, 2:4965)]
+ko.whole.grouped.15 <- data.frame(ko.whole.grouped.15)
+
+ko.whole.grouped.15$time.30.lag15 <-
+  as.POSIXct(ko.whole.grouped.15$time.30.lag15) + 32400 #adjust time
+```
+
+#### 30 secs lagged data
+
+- Use non-lagged data and put 30 secs lag
+
+```{r}
+ko.whole.grouped.30 <- ko.whole.grouped[-1, ]
+```
+
+#### 45 secs lagged data
+
+- Use 15 secs-lagged data and put 30 secs lag
+
+```{r}
+ko.whole.grouped.45 <- ko.whole.grouped.15[-1, ]
+```
+

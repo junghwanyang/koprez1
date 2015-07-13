@@ -1,0 +1,180 @@
+---
+title: "04 Data Prep - Combine with Debate Data"
+author: "JungHwan Yang"
+date: "May 10, 2015"
+output: html_document
+---
+
+### Before merge Twitter data with debate coding data, make a smaller, merged data that only have the variables of interest
+
+*The list of variables*
+
+| Variable     | Variable name in R data | New Variable name |              |              |              |
+|--------------|-------------------------|-------------------|--------------|--------------|--------------|
+|              |                         | No lag            | 15 sec lag   | 30 sec lag   | 45 sec lag   |
+|--------------|-------------------------|-------------------|--------------|--------------|--------------|
+| Total count  | count.seg               | countSeg0         | countSeg15   | countSeg30   | countSeg45   |
+| Conservative | classC                  | classC0           | classC15     | classC30     | classC45     |
+| Liberal      | classL                  | classL0           | classL15     | classL30     | classL45     |
+| Park         | 박근혜.stem             | ghPark0           | ghPark15     | ghPark30     | ghPark45     |
+| Moon         | 문재인.stem             | ghMoon0           | ghMoon15     | ghMoon30     | ghMoon45     |
+| Lee          | 이정희.stem             | ghLee0            | ghLee15      | ghLee30      | ghLee45      |
+| Withdraw     | 사퇴.stem               | ghWithdraw0       | ghWithdraw15 | ghWithdraw30 | ghWithdraw45 |
+| Dakaki Masao | 다까.stem               | ghDakaki0         | ghDakaki15   | ghDakaki30   | ghDakaki45   |
+| Defeat You   | 떨어뜨.stem             | ghDefeatU0        | ghDefeatU15  | ghDefeatU30  | ghDefeatU45  |
+| Communist    | communist.key           | ghCommunist0      | ghCommunist15| ghCommunist30| ghCommunist45|
+| Evaluation   | 잃을게                  | ghEval0           | ghEval15     | ghEval30     | ghEval45     |
+
+Since number of rows of *non-lagged*, *15, 30, 45 sec lagged* datasets are different, delete the last row of *non-lagged* and *15 sec lagged* data before merging data
+
+```{r}
+ko.whole.grouped <- ko.whole.grouped[-nrow(ko.whole.grouped), ]
+ko.whole.grouped.15 <- ko.whole.grouped.15[-nrow(ko.whole.grouped.15), ]
+
+df.tweets <- as.data.frame(
+  cbind(ko.whole.grouped$count.seg,
+        ko.whole.grouped$classC, ko.whole.grouped$classL,
+        ko.whole.grouped$박근혜.stem, ko.whole.grouped$문재인.stem,
+        ko.whole.grouped$이정희.stem, ko.whole.grouped$사퇴.stem,
+        ko.whole.grouped$다까.stem, ko.whole.grouped$떨어뜨.stem,
+        ko.whole.grouped$communist.key, ko.whole.grouped$잃을게, # no lag
+        ko.whole.grouped.15$count.seg,
+        ko.whole.grouped.15$classC, ko.whole.grouped.15$classL,
+        ko.whole.grouped.15$박근혜.stem, ko.whole.grouped.15$문재인.stem,
+        ko.whole.grouped.15$이정희.stem, ko.whole.grouped.15$사퇴.stem,
+        ko.whole.grouped.15$다까.stem, ko.whole.grouped.15$떨어뜨.stem,
+        ko.whole.grouped.15$communist.key, ko.whole.grouped.15$잃을게, # 15sec lag
+        ko.whole.grouped.30$count.seg,
+        ko.whole.grouped.30$classC, ko.whole.grouped.30$classL,
+        ko.whole.grouped.30$박근혜.stem, ko.whole.grouped.30$문재인.stem,
+        ko.whole.grouped.30$이정희.stem, ko.whole.grouped.30$사퇴.stem,
+        ko.whole.grouped.30$다까.stem, ko.whole.grouped.30$떨어뜨.stem,
+        ko.whole.grouped.30$communist.key, ko.whole.grouped.30$잃을게, # 30sec lag
+        ko.whole.grouped.45$count.seg,
+        ko.whole.grouped.45$classC, ko.whole.grouped.45$classL,
+        ko.whole.grouped.45$박근혜.stem, ko.whole.grouped.45$문재인.stem,
+        ko.whole.grouped.45$이정희.stem, ko.whole.grouped.45$사퇴.stem,
+        ko.whole.grouped.45$다까.stem, ko.whole.grouped.45$떨어뜨.stem,
+        ko.whole.grouped.45$communist.key, ko.whole.grouped.45$잃을게)) # 45sec lag
+
+names(df.tweets) <-
+  c("ghCountSeg0","ghClassC0","ghClassL0", "ghPark0", "ghMoon0", "ghLee0",
+    "ghWithdraw0", "ghDakaki0", "ghDefeatU0", "ghCommunist0", "ghEval0",
+    "ghCountSeg15","ghClassC15","ghClassL15", "ghPark15", "ghMoon15", "ghLee15",
+    "ghWithdraw15", "ghDakaki15", "ghDefeatU15", "ghCommunist15", "ghEval15",
+    "ghCountSeg30","ghClassC30","ghClassL30", "ghPark30", "ghMoon30", "ghLee30",
+    "ghWithdraw30", "ghDakaki30", "ghDefeatU30", "ghCommunist30", "ghEval30",
+    "ghCountSeg45","ghClassC45","ghClassL45", "ghPark45", "ghMoon45", "ghLee45",
+    "ghWithdraw45", "ghDakaki45", "ghDefeatU45", "ghCommunist45", "ghEval45" )
+
+df.tweets <- as.data.frame(
+  cbind(ko.whole.grouped$count.seg,
+  ko.whole.grouped$classC, ko.whole.grouped$classL,
+  ko.whole.grouped$박근혜.stem, ko.whole.grouped$문재인.stem,
+  ko.whole.grouped$이정희.stem, ko.whole.grouped$사퇴.stem,
+  ko.whole.grouped$다까.stem, ko.whole.grouped$떨어뜨.stem,
+  ko.whole.grouped$communist.key, ko.whole.grouped$잃을게, # no lag
+  ko.whole.grouped$classC/ko.whole.grouped$count.seg,
+  ko.whole.grouped$classL/ko.whole.grouped$count.seg,
+  ko.whole.grouped$박근혜.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$문재인.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$이정희.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$사퇴.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$다까.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$떨어뜨.stem/ko.whole.grouped$count.seg,
+  ko.whole.grouped$communist.key/ko.whole.grouped$count.seg,
+  ko.whole.grouped$잃을게/ko.whole.grouped$count.seg, # no lag, normalized
+  ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$classC, ko.whole.grouped.15$classL,
+  ko.whole.grouped.15$박근혜.stem, ko.whole.grouped.15$문재인.stem,
+  ko.whole.grouped.15$이정희.stem, ko.whole.grouped.15$사퇴.stem,
+  ko.whole.grouped.15$다까.stem, ko.whole.grouped.15$떨어뜨.stem,
+  ko.whole.grouped.15$communist.key, ko.whole.grouped.15$잃을게, # 15sec lag
+  ko.whole.grouped.15$classC/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$classL/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$박근혜.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$문재인.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$이정희.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$사퇴.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$다까.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$떨어뜨.stem/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$communist.key/ko.whole.grouped.15$count.seg,
+  ko.whole.grouped.15$잃을게/ko.whole.grouped.15$count.seg, # 15sec lag, normalized
+  ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$classC, ko.whole.grouped.30$classL,
+  ko.whole.grouped.30$박근혜.stem, ko.whole.grouped.30$문재인.stem,
+  ko.whole.grouped.30$이정희.stem, ko.whole.grouped.30$사퇴.stem,
+  ko.whole.grouped.30$다까.stem, ko.whole.grouped.30$떨어뜨.stem,
+  ko.whole.grouped.30$communist.key, ko.whole.grouped.30$잃을게, # 30sec lag
+  ko.whole.grouped.30$classC/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$classL/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$박근혜.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$문재인.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$이정희.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$사퇴.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$다까.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$떨어뜨.stem/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$communist.key/ko.whole.grouped.30$count.seg,
+  ko.whole.grouped.30$잃을게/ko.whole.grouped.30$count.seg, # 30sec lag, normalized
+  ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$classC, ko.whole.grouped.45$classL,
+  ko.whole.grouped.45$박근혜.stem, ko.whole.grouped.45$문재인.stem,
+  ko.whole.grouped.45$이정희.stem, ko.whole.grouped.45$사퇴.stem,
+  ko.whole.grouped.45$다까.stem, ko.whole.grouped.45$떨어뜨.stem,
+  ko.whole.grouped.45$communist.key, ko.whole.grouped.45$잃을게, # 45sec lag
+  ko.whole.grouped.45$classC/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$classL/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$박근혜.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$문재인.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$이정희.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$사퇴.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$다까.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$떨어뜨.stem/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$communist.key/ko.whole.grouped.45$count.seg,
+  ko.whole.grouped.45$잃을게/ko.whole.grouped.45$count.seg)) # 45sec lag, normalized
+
+names(df.tweets) <-
+  c("ghCountSeg0","ghClassC0","ghClassL0", "ghPark0", "ghMoon0", "ghLee0",
+    "ghWithdraw0", "ghDakaki0", "ghDefeatU0", "ghCommunist0", "ghEval0",
+    "ghClassCnorm0","ghClassLnorm0", "ghParknorm0", "ghMoonnorm0", "ghLeenorm0",
+    "ghWithdrawnorm0", "ghDakakinorm0", "ghDefeatUnorm0", "ghCommunistnorm0", "ghEvalnorm0",    
+    "ghCountSeg15","ghClassC15","ghClassL15", "ghPark15", "ghMoon15", "ghLee15",
+    "ghWithdraw15", "ghDakaki15", "ghDefeatU15", "ghCommunist15", "ghEval15",
+    "ghClassCnorm15","ghClassLnorm15", "ghParknorm15", "ghMoonnorm15", "ghLeenorm15",
+    "ghWithdrawnorm15", "ghDakakinorm15", "ghDefeatUnorm15", "ghCommunistnorm15", "ghEvalnorm15",
+    "ghCountSeg30","ghClassC30","ghClassL30", "ghPark30", "ghMoon30", "ghLee30",
+    "ghWithdraw30", "ghDakaki30", "ghDefeatU30", "ghCommunist30", "ghEval30",
+    "ghClassCnorm30","ghClassLnorm30", "ghParknorm30", "ghMoonnorm30", "ghLeenorm30",
+    "ghWithdrawnorm30", "ghDakakinorm30", "ghDefeatUnorm30", "ghCommunistnorm30", "ghEvalnorm30",
+    "ghCountSeg45","ghClassC45","ghClassL45", "ghPark45", "ghMoon45", "ghLee45",
+    "ghWithdraw45", "ghDakaki45", "ghDefeatU45", "ghCommunist45", "ghEval45",
+    "ghClassCnorm45","ghClassLnorm45", "ghParknorm45", "ghMoonnorm45", "ghLeenorm45",
+    "ghWithdrawnorm45", "ghDakakinorm45", "ghDefeatUnorm45", "ghCommunistnorm45", "ghEvalnorm45")
+
+
+df.tweets <- df.tweets[c(26:242), ]
+
+# Merge this .csv file with the debate coding data!
+write.table(df.tweets, "df.tweets.csv", sep = ",", col.names = T)
+```
+
+### Merged dataset
+
+I merged the df.tweets with the debate coding and made .xls and .sav files.
+I will import them here for further analyses.
+
+```{r}
+library(foreign)
+d.merged <- read.spss(file = 'Data/Korean Debate Merged.sav',
+                      to.data.frame = T)
+
+# Need to recode 0 (NA) to 2 (No)
+d.merged[, c(7:30, 32:40, 42:50, 52:54)][d.merged[, c(7:30, 32:40, 42:50, 52:54)] == 0] <- 2
+
+
+# Recode 0 to NA for depicting the frequencies of some variables
+tmp <- read.spss(file = 'Data/Korean Debate Merged.sav',
+                      to.data.frame = T)
+tmp <- tmp[, c(7:30, 32:40, 42:50, 52:54)]
+tmp[tmp == 0] <- NA
+```

@@ -1,0 +1,1159 @@
+---
+title: "05 Regression Models"
+author: "JungHwan Yang"
+date: "May 12, 2015"
+output: html_document
+---
+
+0. Descriptive statistics
+
+```{r}
+# Install packages
+library(QuantPsyc)
+```
+
+
+1. Regreesion models predicting normalized volume of candidate mentions and political preference
+
+- No lag
+
+
+```{r}
+## Name mentions
+### Block 1: Candidate Presence
+
+lm.parkN0.b1 <-
+  lm(ghParknorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.moonN0.b1 <-
+  lm(ghMoonnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.leeN0.b1 <-
+  lm(ghLeenorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.parkN0.b2 <-
+  lm(ghParknorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.moonN0.b2 <-
+  lm(ghMoonnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.leeN0.b2 <-
+  lm(ghLeenorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.parkN0.b3 <-
+  lm(ghParknorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.moonN0.b3 <-
+  lm(ghMoonnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.leeN0.b3 <-
+  lm(ghLeenorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone, # Tonal
+      data = d.merged)
+
+# Block 4: Visual Elements
+lm.parkN0.b4 <-
+  lm(ghParknorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.moonN0.b4 <-
+  lm(ghMoonnorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.leeN0.b4 <-
+  lm(ghLeenorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+## Political Preferences
+### Block 1: Candidate Presence
+
+lm.classCN0.b1 <-
+  lm(ghClassCnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.classLN0.b1 <-
+  lm(ghClassLnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.classCN0.b2 <-
+  lm(ghClassCnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.classLN0.b2 <-
+  lm(ghClassLnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.classCN0.b3 <-
+  lm(ghClassCnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.classLN0.b3 <-
+  lm(ghClassLnorm0 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+# Block 4: Visual Elements
+lm.classCN0.b4 <-
+  lm(ghClassCnorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.classLN0.b4 <-
+  lm(ghClassLnorm0 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+```
+
+
+2. 15 Second lag
+
+
+```{r}
+
+### Block 1: Candidate Presence
+
+lm.parkN15.b1 <-
+  lm(ghParknorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.moonN15.b1 <-
+  lm(ghMoonnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.leeN15.b1 <-
+  lm(ghLeenorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.parkN15.b2 <-
+  lm(ghParknorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.moonN15.b2 <-
+  lm(ghMoonnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.leeN15.b2 <-
+  lm(ghLeenorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.parkN15.b3 <-
+  lm(ghParknorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.moonN15.b3 <-
+  lm(ghMoonnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.leeN15.b3 <-
+  lm(ghLeenorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone, # Tonal
+      data = d.merged)
+
+# Block 4: Visual Elements
+lm.parkN15.b4 <-
+  lm(ghParknorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.moonN15.b4 <-
+  lm(ghMoonnorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.leeN15.b4 <-
+  lm(ghLeenorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+
+
+
+### Block 1: Candidate Presence
+
+lm.classCN15.b1 <-
+  lm(ghClassCnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.classLN15.b1 <-
+  lm(ghClassLnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.classCN15.b2 <-
+  lm(ghClassCnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.classLN15.b2 <-
+  lm(ghClassLnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.classCN15.b3 <-
+  lm(ghClassCnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.classLN15.b3 <-
+  lm(ghClassLnorm15 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+# Block 4: Visual Elements
+lm.classCN15.b4 <-
+  lm(ghClassCnorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.classLN15.b4 <-
+  lm(ghClassLnorm15 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+```
+
+
+3. 30 Second lag
+
+
+```{r}
+
+### Block 1: Candidate Presence
+
+lm.parkN30.b1 <-
+  lm(ghParknorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.moonN30.b1 <-
+  lm(ghMoonnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.leeN30.b1 <-
+  lm(ghLeenorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.parkN30.b2 <-
+  lm(ghParknorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.moonN30.b2 <-
+  lm(ghMoonnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.leeN30.b2 <-
+  lm(ghLeenorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.parkN30.b3 <-
+  lm(ghParknorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.moonN30.b3 <-
+  lm(ghMoonnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.leeN30.b3 <-
+  lm(ghLeenorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone, # Tonal
+      data = d.merged)
+
+# Block 4: Visual Elements
+lm.parkN30.b4 <-
+  lm(ghParknorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.moonN30.b4 <-
+  lm(ghMoonnorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.leeN30.b4 <-
+  lm(ghLeenorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+
+
+
+### Block 1: Candidate Presence
+
+lm.classCN30.b1 <-
+  lm(ghClassCnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.classLN30.b1 <-
+  lm(ghClassLnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.classCN30.b2 <-
+  lm(ghClassCnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.classLN30.b2 <-
+  lm(ghClassLnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.classCN30.b3 <-
+  lm(ghClassCnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.classLN30.b3 <-
+  lm(ghClassLnorm30 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+# Block 4: Visual Elements
+lm.classCN30.b4 <-
+  lm(ghClassCnorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.classLN30.b4 <-
+  lm(ghClassLnorm30 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+```
+
+4. 45 Second lag
+
+```{r}
+
+### Block 1: Candidate Presence
+
+lm.parkN45.b1 <-
+  lm(ghParknorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.moonN45.b1 <-
+  lm(ghMoonnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.leeN45.b1 <-
+  lm(ghLeenorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.parkN45.b2 <-
+  lm(ghParknorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.moonN45.b2 <-
+  lm(ghMoonnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.leeN45.b2 <-
+  lm(ghLeenorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.parkN45.b3 <-
+  lm(ghParknorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.moonN45.b3 <-
+  lm(ghMoonnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.leeN45.b3 <-
+  lm(ghLeenorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone, # Tonal
+      data = d.merged)
+
+# Block 4: Visual Elements
+lm.parkN45.b4 <-
+  lm(ghParknorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.moonN45.b4 <-
+  lm(ghMoonnorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.leeN45.b4 <-
+  lm(ghLeenorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+
+
+
+### Block 1: Candidate Presence
+
+lm.classCN45.b1 <-
+  lm(ghClassCnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+lm.classLN45.b1 <-
+  lm(ghClassLnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence, data = d.merged) # Meme
+
+# Block 2: Verbal Elements
+
+lm.classCN45.b2 <-
+  lm(ghClassCnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+lm.classLN45.b2 <-
+  lm(ghClassLnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU, # Meme
+       data = d.merged)
+
+# Block 3: Tonal Elements
+lm.classCN45.b3 <-
+  lm(ghClassCnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+lm.classLN45.b3 <-
+  lm(ghClassLnorm45 ~
+       LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+       LJH_att + LJH_resp + LJH_con + LJH_nar +
+       MJI_att + MJI_resp + MJI_con + MJI_nar +
+       PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+       Meme_Withdraw + Meme_Dakaki + Meme_DefeatU + # Meme
+       LJH_ATtone + LJH_HRtone +
+       MJI_ATtone + MJI_HRtone +
+       PGH_ATtone + PGH_HRtone, # Tonal
+       data = d.merged)
+
+# Block 4: Visual Elements
+lm.classCN45.b4 <-
+  lm(ghClassCnorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface  +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+
+lm.classLN45.b4 <-
+  lm(ghClassLnorm45 ~
+      LJH_Presence + MJI_Presence + PGH_Presence + # Presence
+      LJH_att + LJH_resp + LJH_con + LJH_nar +
+      MJI_att + MJI_resp + MJI_con + MJI_nar +
+      PGH_att + PGH_resp + PGH_con + PGH_nar + # Verbal
+      Meme_Withdraw + Meme_Dakaki + Meme_DefeatU +
+      LJH_ATtone + LJH_HRtone +
+      MJI_ATtone + MJI_HRtone +
+      PGH_ATtone + PGH_HRtone + # Tonal
+      LJH_HRface +
+      MJI_HRface +
+      PGH_HRface + # Facial
+      LJH_AffGest +
+      MJI_AffGest +
+      PGH_AffGest, # Gesture
+      data = d.merged) # Meme
+```
+
+
+### Summary Statistics
+
+
+```{r}
+# DV: Park
+## No lag
+summary(lm.parkN0.b1); summary(lm.parkN0.b2); summary(lm.parkN0.b3); summary(lm.parkN0.b4)
+summary(lm.parkN0.b1)$adj.r.squared; summary(lm.parkN0.b2)$adj.r.squared; summary(lm.parkN0.b3)$adj.r.squared; summary(lm.parkN0.b4)$adj.r.squared
+anova(lm.parkN0.b1, lm.parkN0.b2)
+anova(lm.parkN0.b2, lm.parkN0.b3)
+anova(lm.parkN0.b3, lm.parkN0.b4)
+lm.beta(lm.parkN0.b4)
+
+## 15 sec lag
+summary(lm.parkN15.b1); summary(lm.parkN15.b2); summary(lm.parkN15.b3); summary(lm.parkN15.b4)
+summary(lm.parkN15.b1)$adj.r.squared; summary(lm.parkN15.b2)$adj.r.squared; summary(lm.parkN15.b3)$adj.r.squared; summary(lm.parkN15.b4)$adj.r.squared
+anova(lm.parkN15.b1, lm.parkN15.b2)
+anova(lm.parkN15.b2, lm.parkN15.b3)
+anova(lm.parkN15.b3, lm.parkN15.b4)
+lm.beta(lm.parkN15.b1); lm.beta(lm.parkN15.b2); lm.beta(lm.parkN15.b3); lm.beta(lm.parkN15.b4)
+
+## 30 sec lag
+summary(lm.parkN30.b1); summary(lm.parkN30.b2); summary(lm.parkN30.b3); summary(lm.parkN30.b4)
+summary(lm.parkN30.b1)$adj.r.squared; summary(lm.parkN30.b2)$adj.r.squared; summary(lm.parkN30.b3)$adj.r.squared; summary(lm.parkN30.b4)$adj.r.squared
+anova(lm.parkN30.b1, lm.parkN30.b2)
+anova(lm.parkN30.b2, lm.parkN30.b3)
+anova(lm.parkN30.b3, lm.parkN30.b4)
+lm.beta(lm.parkN30.b1); lm.beta(lm.parkN30.b2); lm.beta(lm.parkN30.b3); lm.beta(lm.parkN30.b4)
+
+## 45 sec lag
+summary(lm.parkN45.b1); summary(lm.parkN45.b2); summary(lm.parkN45.b3); summary(lm.parkN45.b4)
+summary(lm.parkN45.b1)$adj.r.squared; summary(lm.parkN45.b2)$adj.r.squared; summary(lm.parkN45.b3)$adj.r.squared; summary(lm.parkN45.b4)$adj.r.squared
+anova(lm.parkN45.b1, lm.parkN45.b2)
+anova(lm.parkN45.b2, lm.parkN45.b3)
+anova(lm.parkN45.b3, lm.parkN45.b4)
+lm.beta(lm.parkN45.b1); lm.beta(lm.parkN45.b2); lm.beta(lm.parkN45.b3); lm.beta(lm.parkN45.b4)
+
+# Moon
+## No lag
+summary(lm.moonN0.b1); summary(lm.moonN0.b2); summary(lm.moonN0.b3); summary(lm.moonN0.b4)
+summary(lm.moonN0.b1)$adj.r.squared; summary(lm.moonN0.b2)$adj.r.squared; summary(lm.moonN0.b3)$adj.r.squared; summary(lm.moonN0.b4)$adj.r.squared
+anova(lm.moonN0.b1, lm.moonN0.b2)
+anova(lm.moonN0.b2, lm.moonN0.b3)
+anova(lm.moonN0.b3, lm.moonN0.b4)
+lm.beta(lm.moonN0.b1); lm.beta(lm.moonN0.b2); lm.beta(lm.moonN0.b3); lm.beta(lm.moonN0.b4)
+
+## 15 sec lag
+summary(lm.moonN15.b1); summary(lm.moonN15.b2); summary(lm.moonN15.b3); summary(lm.moonN15.b4)
+summary(lm.moonN15.b1)$adj.r.squared; summary(lm.moonN15.b2)$adj.r.squared; summary(lm.moonN15.b3)$adj.r.squared; summary(lm.moonN15.b4)$adj.r.squared
+anova(lm.moonN15.b1, lm.moonN15.b2)
+anova(lm.moonN15.b2, lm.moonN15.b3)
+anova(lm.moonN15.b3, lm.moonN15.b4)
+lm.beta(lm.moonN15.b1); lm.beta(lm.moonN15.b2); lm.beta(lm.moonN15.b3); lm.beta(lm.moonN15.b4)
+
+## 30 sec lag
+summary(lm.moonN30.b1); summary(lm.moonN30.b2); summary(lm.moonN30.b3); summary(lm.moonN30.b4)
+summary(lm.moonN30.b1)$adj.r.squared; summary(lm.moonN30.b2)$adj.r.squared; summary(lm.moonN30.b3)$adj.r.squared; summary(lm.moonN30.b4)$adj.r.squared
+anova(lm.moonN30.b1, lm.moonN30.b2)
+anova(lm.moonN30.b2, lm.moonN30.b3)
+anova(lm.moonN30.b3, lm.moonN30.b4)
+lm.beta(lm.moonN30.b1); lm.beta(lm.moonN30.b2); lm.beta(lm.moonN30.b3); lm.beta(lm.moonN30.b4)
+
+## 45 sec lag
+summary(lm.moonN45.b1); summary(lm.moonN45.b2); summary(lm.moonN45.b3); summary(lm.moonN45.b4)
+summary(lm.moonN45.b1)$adj.r.squared; summary(lm.moonN45.b2)$adj.r.squared; summary(lm.moonN45.b3)$adj.r.squared; summary(lm.moonN45.b4)$adj.r.squared
+anova(lm.moonN45.b1, lm.moonN45.b2)
+anova(lm.moonN45.b2, lm.moonN45.b3)
+anova(lm.moonN45.b3, lm.moonN45.b4)
+lm.beta(lm.moonN45.b1); lm.beta(lm.moonN45.b2); lm.beta(lm.moonN45.b3); lm.beta(lm.moonN45.b4)
+
+# Lee
+## No lag
+summary(lm.leeN0.b1); summary(lm.leeN0.b2); summary(lm.leeN0.b3); summary(lm.leeN0.b4)
+summary(lm.leeN0.b1)$adj.r.squared; summary(lm.leeN0.b2)$adj.r.squared; summary(lm.leeN0.b3)$adj.r.squared; summary(lm.leeN0.b4)$adj.r.squared
+anova(lm.leeN0.b1, lm.leeN0.b2)
+anova(lm.leeN0.b2, lm.leeN0.b3)
+anova(lm.leeN0.b3, lm.leeN0.b4)
+lm.beta(lm.leeN0.b1); lm.beta(lm.leeN0.b2); lm.beta(lm.leeN0.b3); lm.beta(lm.leeN0.b4)
+
+## 15 sec lag
+summary(lm.leeN15.b1); summary(lm.leeN15.b2); summary(lm.leeN15.b3); summary(lm.leeN15.b4)
+summary(lm.leeN15.b1)$adj.r.squared; summary(lm.leeN15.b2)$adj.r.squared; summary(lm.leeN15.b3)$adj.r.squared; summary(lm.leeN15.b4)$adj.r.squared
+anova(lm.leeN15.b1, lm.leeN15.b2)
+anova(lm.leeN15.b2, lm.leeN15.b3)
+anova(lm.leeN15.b3, lm.leeN15.b4)
+lm.beta(lm.leeN15.b1); lm.beta(lm.leeN15.b2); lm.beta(lm.leeN15.b3); lm.beta(lm.leeN15.b4)
+
+## 30 sec lag
+summary(lm.leeN30.b1); summary(lm.leeN30.b2); summary(lm.leeN30.b3); summary(lm.leeN30.b4)
+summary(lm.leeN30.b1)$adj.r.squared; summary(lm.leeN30.b2)$adj.r.squared; summary(lm.leeN30.b3)$adj.r.squared; summary(lm.leeN30.b4)$adj.r.squared
+anova(lm.leeN30.b1, lm.leeN30.b2)
+anova(lm.leeN30.b2, lm.leeN30.b3)
+anova(lm.leeN30.b3, lm.leeN30.b4)
+lm.beta(lm.leeN30.b1); lm.beta(lm.leeN30.b2); lm.beta(lm.leeN30.b3); lm.beta(lm.leeN30.b4)
+
+## 45 sec lag
+summary(lm.leeN45.b1); summary(lm.leeN45.b2); summary(lm.leeN45.b3); summary(lm.leeN45.b4)
+summary(lm.leeN45.b1)$adj.r.squared; summary(lm.leeN45.b2)$adj.r.squared; summary(lm.leeN45.b3)$adj.r.squared; summary(lm.leeN45.b4)$adj.r.squared
+anova(lm.leeN45.b1, lm.leeN45.b2)
+anova(lm.leeN45.b2, lm.leeN45.b3)
+anova(lm.leeN45.b3, lm.leeN45.b4)
+lm.beta(lm.leeN45.b1); lm.beta(lm.leeN45.b2); lm.beta(lm.leeN45.b3); lm.beta(lm.leeN45.b4)
+
+# DV: Conservative
+## No lag
+summary(lm.classCN0.b1); summary(lm.classCN0.b2); summary(lm.classCN0.b3); summary(lm.classCN0.b4)
+summary(lm.classCN0.b1)$adj.r.squared; summary(lm.classCN0.b2)$adj.r.squared; summary(lm.classCN0.b3)$adj.r.squared; summary(lm.classCN0.b4)$adj.r.squared
+anova(lm.classCN0.b1, lm.classCN0.b2)
+anova(lm.classCN0.b2, lm.classCN0.b3)
+anova(lm.classCN0.b3, lm.classCN0.b4)
+lm.beta(lm.classCN0.b4)
+
+## 15 sec lag
+summary(lm.classCN15.b1); summary(lm.classCN15.b2); summary(lm.classCN15.b3); summary(lm.classCN15.b4)
+summary(lm.classCN15.b1)$adj.r.squared; summary(lm.classCN15.b2)$adj.r.squared; summary(lm.classCN15.b3)$adj.r.squared; summary(lm.classCN15.b4)$adj.r.squared
+anova(lm.classCN15.b1, lm.classCN15.b2)
+anova(lm.classCN15.b2, lm.classCN15.b3)
+anova(lm.classCN15.b3, lm.classCN15.b4)
+lm.beta(lm.classCN15.b1); lm.beta(lm.classCN15.b2); lm.beta(lm.classCN15.b3); lm.beta(lm.classCN15.b4)
+
+## 30 sec lag
+summary(lm.classCN30.b1); summary(lm.classCN30.b2); summary(lm.classCN30.b3); summary(lm.classCN30.b4)
+summary(lm.classCN30.b1)$adj.r.squared; summary(lm.classCN30.b2)$adj.r.squared; summary(lm.classCN30.b3)$adj.r.squared; summary(lm.classCN30.b4)$adj.r.squared
+anova(lm.classCN30.b1, lm.classCN30.b2)
+anova(lm.classCN30.b2, lm.classCN30.b3)
+anova(lm.classCN30.b3, lm.classCN30.b4)
+lm.beta(lm.classCN30.b1); lm.beta(lm.classCN30.b2); lm.beta(lm.classCN30.b3); lm.beta(lm.classCN30.b4)
+
+## 45 sec lag
+summary(lm.classCN45.b1); summary(lm.classCN45.b2); summary(lm.classCN45.b3); summary(lm.classCN45.b4)
+summary(lm.classCN45.b1)$adj.r.squared; summary(lm.classCN45.b2)$adj.r.squared; summary(lm.classCN45.b3)$adj.r.squared; summary(lm.classCN45.b4)$adj.r.squared
+anova(lm.classCN45.b1, lm.classCN45.b2)
+anova(lm.classCN45.b2, lm.classCN45.b3)
+anova(lm.classCN45.b3, lm.classCN45.b4)
+lm.beta(lm.classCN45.b1); lm.beta(lm.classCN45.b2); lm.beta(lm.classCN45.b3); lm.beta(lm.classCN45.b4)
+
+
+# DV: Liberal
+## No lag
+summary(lm.classLN0.b1); summary(lm.classLN0.b2); summary(lm.classLN0.b3); summary(lm.classLN0.b4)
+summary(lm.classLN0.b1)$adj.r.squared; summary(lm.classLN0.b2)$adj.r.squared; summary(lm.classLN0.b3)$adj.r.squared; summary(lm.classLN0.b4)$adj.r.squared
+anova(lm.classLN0.b1, lm.classLN0.b2)
+anova(lm.classLN0.b2, lm.classLN0.b3)
+anova(lm.classLN0.b3, lm.classLN0.b4)
+lm.beta(lm.classLN0.b4)
+
+## 15 sec lag
+summary(lm.classLN15.b1); summary(lm.classLN15.b2); summary(lm.classLN15.b3); summary(lm.classLN15.b4)
+summary(lm.classLN15.b1)$adj.r.squared; summary(lm.classLN15.b2)$adj.r.squared; summary(lm.classLN15.b3)$adj.r.squared; summary(lm.classLN15.b4)$adj.r.squared
+anova(lm.classLN15.b1, lm.classLN15.b2)
+anova(lm.classLN15.b2, lm.classLN15.b3)
+anova(lm.classLN15.b3, lm.classLN15.b4)
+lm.beta(lm.classLN15.b1); lm.beta(lm.classLN15.b2); lm.beta(lm.classLN15.b3); lm.beta(lm.classLN15.b4)
+
+## 30 sec lag
+summary(lm.classLN30.b1); summary(lm.classLN30.b2); summary(lm.classLN30.b3); summary(lm.classLN30.b4)
+summary(lm.classLN30.b1)$adj.r.squared; summary(lm.classLN30.b2)$adj.r.squared; summary(lm.classLN30.b3)$adj.r.squared; summary(lm.classLN30.b4)$adj.r.squared
+anova(lm.classLN30.b1, lm.classLN30.b2)
+anova(lm.classLN30.b2, lm.classLN30.b3)
+anova(lm.classLN30.b3, lm.classLN30.b4)
+lm.beta(lm.classLN30.b1); lm.beta(lm.classLN30.b2); lm.beta(lm.classLN30.b3); lm.beta(lm.classLN30.b4)
+
+## 45 sec lag
+summary(lm.classLN45.b1); summary(lm.classLN45.b2); summary(lm.classLN45.b3); summary(lm.classLN45.b4)
+summary(lm.classLN45.b1)$adj.r.squared; summary(lm.classLN45.b2)$adj.r.squared; summary(lm.classLN45.b3)$adj.r.squared; summary(lm.classLN45.b4)$adj.r.squared
+anova(lm.classLN45.b1, lm.classLN45.b2)
+anova(lm.classLN45.b2, lm.classLN45.b3)
+anova(lm.classLN45.b3, lm.classLN45.b4)
+lm.beta(lm.classLN45.b1); lm.beta(lm.classLN45.b2); lm.beta(lm.classLN45.b3); lm.beta(lm.classLN45.b4)
+
+
+write.csv(round(lm.beta(lm.parkN0.b4), 2), "lm.park0.csv")
+write.csv(round(lm.beta(lm.parkN15.b4), 2), "lm.park15.csv")
+write.csv(round(lm.beta(lm.parkN30.b4), 2), "lm.park30.csv")
+write.csv(round(lm.beta(lm.parkN45.b4), 2), "lm.park45.csv")
+
+write.csv(round(lm.beta(lm.moonN0.b4), 2), "lm.moon0.csv")
+write.csv(round(lm.beta(lm.moonN15.b4), 2), "lm.moon15.csv")
+write.csv(round(lm.beta(lm.moonN30.b4), 2), "lm.moon30.csv")
+write.csv(round(lm.beta(lm.moonN45.b4), 2), "lm.moon45.csv")
+
+write.csv(round(lm.beta(lm.leeN0.b4), 2), "lm.lee0.csv")
+write.csv(round(lm.beta(lm.leeN15.b4), 2), "lm.lee15.csv")
+write.csv(round(lm.beta(lm.leeN30.b4), 2), "lm.lee30.csv")
+write.csv(round(lm.beta(lm.leeN45.b4), 2), "lm.lee45.csv")
+
+write.csv(round(lm.beta(lm.classCN0.b4), 2), "lm.classC0.csv")
+write.csv(round(lm.beta(lm.classCN15.b4), 2), "lm.classC15.csv")
+write.csv(round(lm.beta(lm.classCN30.b4), 2), "lm.classC30.csv")
+write.csv(round(lm.beta(lm.classCN45.b4), 2), "lm.classC45.csv")
+
+write.csv(round(lm.beta(lm.classLN0.b4), 2), "lm.classL0.csv")
+write.csv(round(lm.beta(lm.classLN15.b4), 2), "lm.classL15.csv")
+write.csv(round(lm.beta(lm.classLN30.b4), 2), "lm.classL30.csv")
+write.csv(round(lm.beta(lm.classLN45.b4), 2), "lm.classL45.csv")
+
+
+```
